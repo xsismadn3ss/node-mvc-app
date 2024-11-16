@@ -1,0 +1,24 @@
+extends layout.pug
+
+block content
+  .card.py-2.px-1
+    h4.px-5.pb-2 #{category.nombre}
+    .container
+      button.btn.btn-secondary.mx-2(type='button')
+        a.text-white.text-decoration-none(href='/categorias') Volver
+
+      button.btn.btn-primary.mx-2(type='button' data-bs-toggle='modal' data-bs-target='#editar') Editar
+
+      .modal.fade(id='editar' tabindex='-1' aria-labelledby='editarModal' aria-hidden='true')
+        .modal-dialog
+          .modal-content
+            .modal-header
+              h1.modal-title.fs-5(id='editarModal') Editar categoria
+              button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+            form(method='POST' action='/categorias/:id/edit')
+              .modal-body
+                label.form-label(for='nombre') Nombre
+                input.form-control(type='text' name='nombre' id='nombre' placeholder=category.nombre value=category.nombre)
+              .modal-footer
+                button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Cerrar
+                button.btn.btn-primary(type='submit') Guardar cambios

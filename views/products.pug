@@ -1,0 +1,106 @@
+extends layout.pug
+
+block title
+  | Productos
+
+block content
+  .container
+    h1 Productos
+    if message
+      .badge.text-bg-danger.mb-3 #{message}
+    p
+      button.btn.btn-secondary(type='button' data-bs-toggle='collapse' data-bs-target='#collapseForm' aria-expanded='false' aria-controls='collapseForm') Añadir nuevo producto
+    .collapse(id='collapseForm') 
+      .card.card-body.px-3(style='max-width:30rem')
+        form(method='POST' action='/productos')
+          .mb-3
+            label.form-lable.pt-4(for='nombre') Nombre
+            input.form-control(type='text' name='nombre')
+            label.form-label.pt-4(for='descripcion') Descripcion
+            input.form-control(type='text' name='descripcion')
+            label.form-label.pt-4(for='precio') Precio
+            input.form-control(type='number' step='0.01' name='precio' placeholder='precio unitario')
+            label.form-label.pt-4(for='cantidad') Cantidad
+            input.form-control(type='number' name='cantidad' placeholder='cantidad de productos')
+            label.form-label.pt-4(for='categoria') Categoria
+            br
+            select.form-select.mt-2(id='categoria' name='categoria')
+              if categories
+                option(value='') Selecciona una opción
+                each category in categories
+                  option(value=category.id) #{category.nombre}
+              else
+                option(value='') No hay categorias registradas
+
+          button.btn.btn-secondary(type='submit') Agregar
+    if products
+      table.table.table-hover.table-striped.mt-2
+        thead 
+          tr
+            th(scope='col') id
+            th(scope='col') nombre
+            th(scope='col') descripcion
+            th(scope='col') precio
+            th(scope='col') cantidad
+            th(scope='col') categoria
+        tbody
+        each product in products
+          tr
+            th(scope='row') #{product.id}
+            td #{product.nombre}
+            td #{product.descripcion}
+            td #{product.precio}
+            td #{product.cantidad}
+            td #{product.categoria.nombre ? product.categoria.nombre: "sin categoria"}
+            td
+              button.btn.btn-success.mx-1(type='button' data-bs-toggle='modal' data-bs-target='#editar'+product.id) Editar
+
+              button.btn.btn-danger.mx-1(type='button' data-bs-toggle='modal' data-bs-target='#delete'+product.id) Eliminar
+
+              .modal.fade(id='editar'+product.id tabindex='-1' aria-labelledby='editarModal'+product.id aria-hidden='true')
+                .modal-dialog
+                  .modal-content
+                    .modal-header
+                      h1.modal-title.fs-5(id='editarModal'+product.id) Editar producto
+                      button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                    form(method='POST' action='/productos/'+product.id+'/edit')
+                      .modal-body
+                        label.form-lable.pt-4(for='nombre') Nombre
+                        input.form-control(type='text' name='nombre' placeholder=product.nombre value=product.nombre)
+
+                        label.form-label.pt-4(for='descripcion') Descripcion
+                        input.form-control(type='text' name='descripcion' value=product.descripcion placeholder=product.descripcion)
+
+                        label.form-label.pt-4(for='precio') Precio
+                        input.form-control(type='number' step='0.01' name='precio' placeholder=product.precio value=product.precio)
+
+                        label.form-label.pt-4(for='cantidad') Cantidad
+                        input.form-control(type='number' name='cantidad' placeholder=product.cantidad value=product.cantidad)
+
+                        label.form-label.pt-4(for='categoriaId') Categoria
+                        br
+                        select.form-select.mt-2(id='categoriaId' name='categoriaId')
+                          if categories
+                            option(value=product.categoria.id) #{product.categoria.nombre} (original)
+                            each category in categories
+                              option(value=category.id) #{category.nombre}
+                          else
+                            option(value='') No hay categorias registradas
+                      .modal-footer
+                        button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Cerrar
+                        button.btn.btn-primary(type='submit') Guardar cambios
+
+              .modal.fade(id='delete'+product.id tabindex='-1' aria-labelledby='deleteModal'+product.id aria-hidden='true')
+                .modal-dialog
+                  .modal-content
+                    .modal-header
+                      h1.modal-tittle.fs-5(id='deleteModal'+product.id) Eliminar producto
+                      button.btn-close(type='button'
+                      data-bs-dismmis='modal' aria-label='Close')
+                    form(method='POST' action='/productos/'+product.id+'/delete')
+                      .modal-body
+                        p ¿Esta seguro de eliminar el siguiente producto?
+                        h3 #{product.nombre}
+                      .modal-footer
+                        button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Cerrar
+                        button.btn.btn-primary(type='submit') Eliminar

@@ -1,0 +1,65 @@
+extends layout.pug
+
+block title
+  | Categorias
+
+block content
+  .container
+    h1 Categorias
+    if message
+      .badge.text-bg-danger.mb-3 #{message}
+    p
+      button.btn.btn-secondary(type='button' data-bs-toggle='collapse' data-bs-target='#collapseForm' aria-expanded='false' aria-controls='collapseForm') Añadir categorias
+    .collapse(id='collapseForm') 
+      .card.card-body.px-3(style='max-width:18rem')
+        form(method='POST' action='/categorias')
+          .mb-3
+            label.form-label(for='nombre') Nombre
+            input.form-control(type='text' name='nombre' id='nombre')
+          button.btn.btn-secondary(type='submit') Agregar
+    if categories
+      table.table.table-hover.table-striped(style='margin-top:2rem')
+        thead
+          tr
+            th(scope='col') id
+            th(scope='col') nombre
+            th(scope='col') opciones
+        tbody
+        each category in categories
+          tr
+            th(scope='row') #{category.id}
+            td #{category.nombre}
+            td
+              .container
+                button.btn.btn-success.mx-1(type='button' data-bs-toggle='modal' data-bs-target='#editar'+category.id) Editar
+
+                button.btn.btn-danger.mx-1(type='button' data-bs-toggle='modal' data-bs-target='#delete'+category.id) Eliminar
+
+                .modal.fade(id='editar'+category.id tabindex='-1' aria-labelledby='editarModal'+category.id aria-hidden='true')
+                  .modal-dialog
+                    .modal-content
+                      .modal-header
+                        h1.modal-title.fs-5(id='editarModal'+category.id) Editar categoria
+                        button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                      form(method='POST' action='/categorias/'+category.id+'/edit')
+                        .modal-body
+                          label.form-label(for='nombre') Nombre
+                          input.form-control(type='text' name='nombre' id='nombre' placeholder=category.nombre value=category.nombre)
+                        .modal-footer
+                          button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Cerrar
+                          button.btn.btn-primary(type='submit') Guardar cambios
+
+                .modal.fade(id='delete'+category.id tabindex='-1' aria-labelledby='deleteModal'+category.id aria-hidden='true')
+                  .modal-dialog
+                    .modal-content
+                      .modal-header
+                        h1.modal-tittle.fs-5(id='deleteModal'+category.id) Eliminar categoria
+                        button.btn-close(type='button'
+                        data-bs-dismmis='modal' aria-label='Close')
+                      form(method='POST' action='/categorias/'+category.id+'/delete')
+                        .modal-body
+                          p ¿Esta seguro de eliminar la siguiente categoria?
+                          h3 #{category.nombre}
+                        .modal-footer
+                          button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Cerrar
+                          button.btn.btn-primary(type='submit') Eliminar

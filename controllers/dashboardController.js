@@ -1,0 +1,1 @@
+const {getProductsWithCategory} = require('./modules/queries')
