@@ -1,0 +1,24 @@
+extends layout.pug
+
+block title
+  | Dashboard
+
+block content
+  .container
+    h1 Dashboard
+
+    if products
+        p Productos registrados
+        .row
+          each product in products
+            .col-md-4
+              .card.mb-3
+                .card-body
+                  h4.card-title.text-secondary= product.nombre
+                  small.text-muted.mb-2.d-block= product.categoria.nombre
+                  p.card-text= product.descripcion
+                  p.card-text Cantidad: #{product.cantidad}
+                  p.card-text
+                  strong.text-success $#{product.precio}    
+    else
+        p Añade producto para verlos en esta pagina
